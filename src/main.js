@@ -1,0 +1,16 @@
+import {createClient} from '@supabase/supabase-js';
+import {TravelBackend} from './backend.js';
+import './app.css';
+import './auth.css';
+const $=s=>document.querySelector(s),url=import.meta.env.VITE_SUPABASE_URL,key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+let client,backend,started=false;
+function message(text){$('#auth-message').textContent=text}
+function authScreen(){document.body.classList.remove('app-ready');$('#auth-screen').hidden=false;$('#app-shell').hidden=true}
+function loadScript(file){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=import.meta.env.BASE_URL+file+'?v=1';s.onload=resolve;s.onerror=()=>reject(Error('読み込みに失敗しました。再読み込みしてください。'));document.body.append(s)})}
+async function enter(){try{const me=await backend.member();window.travelBackend=backend;window.travelStoragePrefix='futari-supabase:'+new URL(url).host+':'+me.id+':';$('#account-name').textContent=me.name;$('#account-email').textContent=me.email;$('#auth-screen').hidden=true;$('#app-shell').hidden=false;document.body.classList.add('app-ready');if(!started){started=true;for(const file of ['map-data.js','data.js','app.js','sync-core.js','sync.js','memories.js'])await loadScript(file);const {installMigration}=await import('./migration.js');installMigration(backend)}}catch(e){authScreen();if(e.status===403)message('このアカウントには利用許可がありません。登録したアカウントを確認してください。');else if(e.status!==401)message(e.message==='not_a_member'?'利用許可を確認してください。':'接続できませんでした。通信とアプリの設定を確認してください。');$('#auth-signout').hidden=false}}
+$('#login-form').onsubmit=async e=>{e.preventDefault();const b=$('#login-submit');b.disabled=true;message('ログインしています…');try{const result=await client.auth.signInWithPassword({email:$('#login-email').value.trim(),password:$('#login-password').value});if(result.error){message('メールアドレスとパスワードを確認してください。');return}$('#login-password').value='';await enter()}catch{message('通信を確認して、もう一度お試しください。')}finally{b.disabled=false}};
+async function signOut(){if(client)await client.auth.signOut();location.reload()}
+$('#auth-signout').onclick=signOut;$('#account-signout').onclick=signOut;
+$('#account-button').onclick=async()=>{$('#password-message').textContent='';$('#account-dialog').showModal()};$('#account-close').onclick=()=>$('#account-dialog').close();
+$('#password-form').onsubmit=async e=>{e.preventDefault();const b=$('#password-submit');b.disabled=true;$('#password-message').textContent='';try{const password=$('#new-password').value;if(password.length<12)throw Error('12文字以上のパスワードを入力してください。');if(password!==$('#new-password-confirm').value)throw Error('確認用パスワードが一致しません。');const result=await client.auth.updateUser({password});if(result.error)throw Error('変更できませんでした。再ログインしてからお試しください。');$('#new-password').value='';$('#new-password-confirm').value='';$('#password-message').textContent='パスワードを変更しました。'}catch(err){$('#password-message').textContent=err.message}finally{b.disabled=false}};
+if(!url||!key||url.includes('YOUR_PROJECT')){authScreen();message('初期設定が必要です。同梱のREADMEを見てSupabaseの接続設定を行ってください。');$('#login-submit').disabled=true}else{client=createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});backend=new TravelBackend(client);client.auth.onAuthStateChange(event=>{if(event==='SIGNED_OUT'&&started)location.reload()});enter()}
