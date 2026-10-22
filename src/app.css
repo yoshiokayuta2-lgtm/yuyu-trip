@@ -40,3 +40,9 @@
 
 /* Decorative asterisk is vector artwork, independent of device emoji fonts. */
 svg.flower{display:block;width:1em;height:1em;overflow:visible}
+
+/* Prefecture travel illustrations: preserve the complete drawing on phones too. */
+.pref-illustration{margin:0 0 20px;overflow:hidden;border:1px solid var(--line);border-radius:8px;background:#fff}
+.pref-illustration[hidden]{display:none}
+.pref-illustration img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:contain;background:#fff}
+.pref-illustration figcaption{padding:10px 12px;border-top:1px solid var(--line);font:11px var(--serif);letter-spacing:.06em;text-align:center;color:var(--sub);background:#fcfcf9}
