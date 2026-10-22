@@ -20,7 +20,7 @@ const latin=['HOKKAIDO','AOMORI','IWATE','MIYAGI','AKITA','YAMAGATA','FUKUSHIMA'
 const desc={1:'広い空の下、ふたりでのんびり。',20:'山の空気と、おいしい寄り道。',26:'路地の先に、まだ知らない京都。',47:'青い海と、ゆっくり流れる時間。',17:'古い街並みを、おいしいものと歩く。'};
 function select(id,scroll=false){selected=Number(id);render();if(scroll&&matchMedia('(max-width:760px)').matches)$('#detail').scrollIntoView({behavior:'smooth',block:'start'})}
 // Add each prefecture illustration here using its prefecture number (1–47).
-const prefIllustrations={47:'illustrations/47.png'};
+const prefIllustrations=Object.fromEntries(PREFS.map(p=>[p.id,'illustrations/'+p.id+'.png']));
 function renderPrefIllustration(p){
   const figure=$('#pref-illustration'),img=$('#pref-illustration-image'),file=prefIllustrations[p.id];
   figure.hidden=!file;
