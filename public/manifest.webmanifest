@@ -1,0 +1,32 @@
+{
+  "id": "./",
+  "name": "ゆとりっぷ",
+  "short_name": "ゆとりっぷ",
+  "description": "ゆうたとゆうこの旅と、次の楽しみを残す日本地図。",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f9f8f4",
+  "theme_color": "#f9f8f4",
+  "icons": [
+    {
+      "src": "brand/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "brand/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "brand/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
